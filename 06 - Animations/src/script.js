@@ -51,35 +51,19 @@ renderer.setSize(sizes.width, sizes.height)
 // Animations
 // =======================
 
-// Get the clock function from Three.js to add timing functionalities
-const clock = new THREE.Clock();
+// Setup animation using GSAP
+// (NOTE: GSAP has its own "tick" function, so no need to include it inside there)
+// - Arg 1: Thing to animate
+// - Arg 2: Object
+//      - Duration: Duration of the animation
+//      - Delay: Time before the animation starts
+//      - Property: Value for the property of the "thing to animate" that you want to change
+gsap.to(mesh.position, { duration: 1, delay: 1, x: 2 });
+gsap.to(mesh.position, { duration: 1, delay: 2, x: 0 });
 
 // Function to call on each "tick" or "frame"
 // NOTE: Could also be called "gameLoop" or something similar
 const tick = () => {
-
-    // Time delta from last frame
-    // NOTE: Measured in seconds. Starts at zero at each site reload.
-    const elapsedTime = clock.getElapsedTime();
-
-    // =========================
-    // Update the cube:
-    // (We adapt the cube transform using the elapsed time. That way the animation feel is not
-    //  dependent on the current framerate. NOTE: Its important to note that the elapsed time
-    //  increases over time, so we dont have to "add" to the rotation of the cube, we have to
-    //  simply make it equal to it.)
-
-    // - Half a revolution per second (pi rad)    
-    mesh.rotation.x = elapsedTime * Math.PI * 1/6;
-
-    // - Up and down bob
-    camera.position.y = Math.sin(elapsedTime);
-    camera.position.x = Math.cos(elapsedTime);
-
-    // - Focus on the cube
-    camera.lookAt(mesh.position);
-
-    // =========================
 
     // Render the modified scene
     renderer.render(scene, camera)
