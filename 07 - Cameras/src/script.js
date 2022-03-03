@@ -44,6 +44,25 @@ const mesh = new THREE.Mesh(
 scene.add(mesh)
 
 // =======================
+// CURSOR
+
+// Variable for storing the position of the cursor
+const cursor = {
+    x: 0,
+    y: 0
+}
+
+// Listen for the mouse position
+window.addEventListener('mousemove', (event) => {
+    
+    // Normalize the cursor cursor to go from -0.5 to 0.5
+    cursor.x = event.clientX / sizes.width - 0.5;
+    cursor.y = event.clientY / sizes.height - 0.5;
+
+})
+
+
+// =======================
 // CAMERA
 
 // Create a perspective camera
@@ -51,34 +70,18 @@ scene.add(mesh)
 //  - Arg 2: Aspect ratio (Aspect ratio for the camera view / render dimensions )
 //  - Arg 3: Near (Objects closer than this value are not rendered. Recommended: 0.1)
 //  - Arg 4: Far (Object farther than this value are not rendered. Recommended: 100)
-// const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
-
-// Create an orthographic camera
-//  - Arg 1: Left (How far can the camera see to the left)
-//  - Arg 2: Right (How far can the camera see to the right)
-//  - Arg 3: Top (How far can the camera see upwards)
-//  - Arg 4: Bottom (How far can the camera see downwards)
-//  - Arg 5: Near
-//  - Arg 6: Far
-const aspectRatio = sizes.width / sizes.height;
-const camera = new THREE.OrthographicCamera(-1 * aspectRatio, 1 * aspectRatio, 1, -1, 0.1, 100);
-
-// NOTE: This line will generate a flattened cube. This is because we are doing a square
-// render, but the canvas is rectangular, so the scene is being flattened to fit the canvas.
-// const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 100);
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
 
 // Move the position
-camera.position.x = 2
-camera.position.y = 2
-camera.position.z = 2
+camera.position.z = 3;
 
 // Focus the camera on the cube
 camera.lookAt(mesh.position)
 scene.add(camera)
 
 // =======================
+// RENDERER
 
-// Renderer
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas
 })
@@ -91,10 +94,13 @@ const clock = new THREE.Clock()
 
 const tick = () =>
 {
-    const elapsedTime = clock.getElapsedTime()
+    const elapsedTime = clock.getElapsedTime();
 
-    // Update objects
-    mesh.rotation.y = elapsedTime;
+    // Update the camera position with the cursor coordinates
+    // (Invert the Y coordinates because the cursor coordinates start at 0 at the top)
+    camera.position.x = 5 * cursor.x;
+    camera.position.y = 5 * -cursor.y;
+    camera.lookAt(mesh.position);
 
     // Render
     renderer.render(scene, camera)
