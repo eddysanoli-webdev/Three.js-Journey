@@ -1,11 +1,18 @@
 import './style.css'
 import * as THREE from 'three'
 
+// Green Sock library
+import gsap from 'gsap'
+
 /*
 NOTES:
 
 - requestAnimationFrame: Call the function provided on the next available frame.
   The same function will be called on each new frame.
+
+- Install green sock to use tweens, timelines, etc: npm install --save gsap@3.5.1
+    --save: Adds GSAP to the package.json dependencies
+    @3.5.1: Specify a version to make sure its always compatible.
 
 - 
 
@@ -44,25 +51,35 @@ renderer.setSize(sizes.width, sizes.height)
 // Animations
 // =======================
 
-// Get initial time stamp
-let previousTime = Date.now();
+// Get the clock function from Three.js to add timing functionalities
+const clock = new THREE.Clock();
 
 // Function to call on each "tick" or "frame"
 // NOTE: Could also be called "gameLoop" or something similar
 const tick = () => {
 
-    // Get time delta
-    const currentTime = Date.now();
-    const deltaTime = currentTime - previousTime;
-    
-    // Update the previous time stamp
-    // (After calculating the time delta)
-    previousTime = currentTime;
+    // Time delta from last frame
+    // NOTE: Measured in seconds. Starts at zero at each site reload.
+    const elapsedTime = clock.getElapsedTime();
 
-    // Update the cube rotation
-    // (We adapt the cube transform using the time delta. That way the animation feel is not
-    //  dependent on the current framerate)
-    mesh.rotation.x += 0.001 * deltaTime;
+    // =========================
+    // Update the cube:
+    // (We adapt the cube transform using the elapsed time. That way the animation feel is not
+    //  dependent on the current framerate. NOTE: Its important to note that the elapsed time
+    //  increases over time, so we dont have to "add" to the rotation of the cube, we have to
+    //  simply make it equal to it.)
+
+    // - Half a revolution per second (pi rad)    
+    mesh.rotation.x = elapsedTime * Math.PI * 1/6;
+
+    // - Up and down bob
+    camera.position.y = Math.sin(elapsedTime);
+    camera.position.x = Math.cos(elapsedTime);
+
+    // - Focus on the cube
+    camera.lookAt(mesh.position);
+
+    // =========================
 
     // Render the modified scene
     renderer.render(scene, camera)
