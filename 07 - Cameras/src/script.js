@@ -1,6 +1,10 @@
 import './style.css'
 import * as THREE from 'three'
 
+// Import the OrbitControls from our Node Modules 
+// (Using THREE is not accessible)
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+
 /*
 ========================
 NOTES
@@ -32,7 +36,10 @@ Controls:
     - Orbit Controls: You orbit around a central point, drag the central point to the right
       or to the left, and when you rotate the camera upwards or downwards, it has a limit
       to not go "below the floor" o rotate to be "upside down".
-    - Trackball Controls: Similar to orbit controls but without the rotating limit
+    - Trackball Controls: Similar to orbit controls but without the rotating limit.
+    - Transform Controls: Similar to an editor. Nothing to do with the camera.
+
+Thanks to webpack we can access the controls importing it directly from our node modules.
 
 ========================
 */
@@ -85,6 +92,17 @@ window.addEventListener('mousemove', (event) => {
 //  - Arg 4: Far (Object farther than this value are not rendered. Recommended: 100)
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
 
+// Create orbit controls
+// - Arg 1: Camera to update
+// - Arg 2: DOM element where we will track the mouse events
+const controls = new OrbitControls(camera, canvas);
+
+// Update the controls 
+// (Dont forget the "update()" method call on the tick function to allow for a smooth
+//  damping when moving the camera.)
+controls.enableDamping = true;
+// controls.target.y = 2;
+
 // Move the position
 camera.position.z = 3;
 
@@ -109,15 +127,8 @@ const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime();
 
-    // Update the camera position with the cursor coordinates
-    // Rotate completely around the cube
-    //  - Math.sin(x) / Math.cos(x): Create a circle trajectory around the cube
-    //  - Math.PI * 2: Multiply the position by 2Pi to allow for a single rotation of the cube
-    camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 3;
-    camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3;
-
-    camera.position.y = 5 * -cursor.y;
-    camera.lookAt(mesh.position);
+    // Update controls each frame to get a functional damping
+    controls.update();
 
     // Render
     renderer.render(scene, camera)
