@@ -21,6 +21,19 @@ Dont use extreme values for the "near" and "far" arguments of the camera, you wi
 a bug called "Z-fighting". When two faces are very near each other, the renderer wont be 
 able to figure out which one is in front of the other and they will just flicker
 
+Controls:
+    - Device Orientation: Use the gyroscope on the device to move the camera (Not supported
+      on IOS or is it?)
+    - Fly Controls: Move the camera like a spaceship.
+    - First Person Controls: Like fly controls but with a fixed up axis. You can only rotate
+      the camera. You cannot do a "barrel roll".
+    - Pointer Lock Controls: This is very similar to an FPS game, but requires additional
+      javascript code to make it work like a traditional game. The cursor is hidden.
+    - Orbit Controls: You orbit around a central point, drag the central point to the right
+      or to the left, and when you rotate the camera upwards or downwards, it has a limit
+      to not go "below the floor" o rotate to be "upside down".
+    - Trackball Controls: Similar to orbit controls but without the rotating limit
+
 ========================
 */
 
@@ -97,8 +110,12 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime();
 
     // Update the camera position with the cursor coordinates
-    // (Invert the Y coordinates because the cursor coordinates start at 0 at the top)
-    camera.position.x = 5 * cursor.x;
+    // Rotate completely around the cube
+    //  - Math.sin(x) / Math.cos(x): Create a circle trajectory around the cube
+    //  - Math.PI * 2: Multiply the position by 2Pi to allow for a single rotation of the cube
+    camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 3;
+    camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3;
+
     camera.position.y = 5 * -cursor.y;
     camera.lookAt(mesh.position);
 
