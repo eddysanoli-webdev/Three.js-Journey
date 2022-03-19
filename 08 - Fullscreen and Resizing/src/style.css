@@ -1,0 +1,26 @@
+/* Resets to remove "white outline" */
+* {
+    margin: 0;
+    padding: 0;
+}
+
+/* Prevent "overscroll" */
+html, body {
+    
+    /* If you are using a trackpad on a laptop, you can scroll outside the limits */
+    /* of the page (you can look at the white space below the content) */
+    overflow: hidden;
+}
+
+/* Move the canvas to the top left corner */
+/* NOTE: Canvas has a WebGL class in the HTML */
+.webgl {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    /* Remove blue outline on canvas when drag and dropping */
+    /* NOTE: Only happens sometimes */
+    outline: none;
+
+}
