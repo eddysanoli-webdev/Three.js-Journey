@@ -35,17 +35,27 @@ const scene = new THREE.Scene()
 // - LatheGeometry: You provide a path and a geometry is created by doing 1 revolution of the path
 // - TextGeometry: 3D text
 
-// Create an array for the geometry
-const positionsArray = new Float32Array([
-    0, 0, 0,
-    0, 1, 0,
-    1, 0, 0
-]);
+// Create array for random triangles
+// 50 triangles, each one with 3 vertices, and each vertex with three coordinates (X,Y,Z)
+const count = 50;
+const positionsArray = new Float32Array(count * 3 * 3);
 
-// Create triangle
+// Fill the array
+for (let i = 0; i < count * 3 * 3; i++) {
+
+    // Center the triangles by generating values between -0.5 and 0.5
+    positionsArray[i] = Math.random() - 0.5;
+}
+
+// Generate the geometry
 const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3);
 const geometry = new THREE.BufferGeometry();
 geometry.setAttribute('position', positionsAttribute);
+
+// Indexes: When you have a complex geometry, some triangles share common vertices. 
+// Instead of specifying the same vertex multiple times (one time for each triangle),
+// you can use indexes to say "Both triangle 1 and 2 use vertex 2", effectively reducing
+// the amount of information needed to represent the same geometry. Its harder though.
 
 // Box parameters:
 // - width: Size on the X axis
